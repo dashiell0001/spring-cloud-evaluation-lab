@@ -1,0 +1,18 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    org.springframework.cloud.config.server: DEBUG
+
+spring:
+  profiles:
+    active: native
+  config:
+    activate:
+      on-profile: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations:

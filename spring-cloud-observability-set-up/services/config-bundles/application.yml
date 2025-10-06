@@ -1,0 +1,11 @@
+# Common defaults for all services (optional)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

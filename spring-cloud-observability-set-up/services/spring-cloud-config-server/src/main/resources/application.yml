@@ -1,0 +1,13 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    org.springframework.cloud.config.server: DEBUG
+
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: 

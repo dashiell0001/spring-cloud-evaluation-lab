@@ -1,0 +1,38 @@
+\version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: flights-postgres
+    environment:
+      POSTGRES_DB: flights
+      POSTGRES_USER: flight
+      POSTGRES_PASSWORD: flight
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flight -d flights"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  flight-search-service:
+    image: localhost:5000/flight-search-service:2.0   # ← desde el registry local
+    container_name: flight-search-service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Important: To use docker service hostname "db", not localhost
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/flights
+      SPRING_DATASOURCE_USERNAME: flight
+      SPRING_DATASOURCE_PASSWORD: flight
+      JAVA_TOOL_OPTIONS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

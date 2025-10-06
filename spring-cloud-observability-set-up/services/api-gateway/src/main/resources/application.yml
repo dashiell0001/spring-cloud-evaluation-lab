@@ -1,0 +1,17 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:http://localhost:8090"
+  cloud:
+    config:
+      fail-fast: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway,refresh,env

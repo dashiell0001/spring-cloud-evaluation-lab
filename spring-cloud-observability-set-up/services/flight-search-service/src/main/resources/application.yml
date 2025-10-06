@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: flight-search-service
+  config:
+    import: "configserver:http://localhost:8090"
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 10
+        initial-interval: 2000
+        multiplier: 1.5
+
+logging:
+  pattern:
+    level: "%5p [%X{spring.application.name:-}] [traceId=%X{traceId:-}, spanId=%X{spanId:-}]"
+  file:
+    name: ./logs/application.log
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
+
+management:
+  endpoints.web.exposure.include: health,info,metrics,prometheus,loggers
+  endpoint.health.probes.enabled: true
+  tracing.sampling.probability: 1.0   # 100% en lab
+
+otel.exporter.otlp.endpoint: http://localhost:4317

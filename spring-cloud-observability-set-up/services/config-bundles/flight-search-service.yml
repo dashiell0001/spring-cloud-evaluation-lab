@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flightsdb
+    username: flights
+    password: flights
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 1000
+            read-timeout: 2000
+    loadbalancer:
+      health-check:
+        refetch-instances: true
+        interval: 10s
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+resilience4j:
+  retry:
+    instances:
+      pricing:
+        maxAttempts: 3              
+        waitDuration: 200ms
+        retryExceptions:
+          - feign.RetryableException
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException$BadRequest
+
+  timelimiter:
+    instances:
+      pricing:
+        timeoutDuration: 2s
+        cancelRunningFuture: true

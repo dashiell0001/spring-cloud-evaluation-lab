@@ -1,0 +1,36 @@
+# ---- IntelliJ IDEA ----
+.idea/
+*.iml
+out/
+
+# ---- Eclipse/VSCode (just in case) ----
+.project
+.classpath
+.settings/
+.vscode/
+
+# ---- Java ----
+*.class
+*.log
+hs_err_pid*
+replay_*.log
+*.hprof
+
+# ---- Maven ----
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# ---- Gradle (if present) ----
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ---- OS / Misc ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
