@@ -28,6 +28,7 @@ otel:
 management:
   endpoints.web.exposure.include: health,info,metrics,prometheus,loggers
   endpoint.health.probes.enabled: true
+  endpoint.prometheus.enabled: true
   tracing.sampling.probability: 1.0   # 100% en lab
 
 otel.exporter.otlp.endpoint: http://localhost:4317
