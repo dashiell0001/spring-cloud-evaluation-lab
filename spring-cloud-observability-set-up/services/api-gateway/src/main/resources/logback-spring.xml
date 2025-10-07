@@ -1,0 +1,54 @@
+<configuration scan="true" scanPeriod="30 seconds">
+    <!-- Defaults without env/profile -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="application"/>
+    <property name="ENV" value="local"/>
+    <property name="LOG_DIR" value="./logs"/>
+    <property name="LOG_MAX_HISTORY" value="7"/>
+    <property name="LOG_MAX_SIZE" value="20MB"/>
+
+    <!-- Console JSON (useful while running locally or inside containers) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <threadName/>
+                <loggerName/>
+                <message fieldName="log_message"/>
+                <mdc/>          <!-- includes traceId/spanId if Micrometer Tracing is on classpath -->
+                <context/>
+                <stackTrace/>
+                <globalCustomFields>{"service_name":"${APP_NAME}","environment":"${ENV}"}</globalCustomFields>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- File JSON (rolling by size+time) -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${APP_NAME}.log</file>
+        <append>true</append>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/><logLevel/><threadName/><loggerName/>
+                <message fieldName="log_message"/><mdc/><context/><stackTrace/>
+                <globalCustomFields>{"service_name":"${APP_NAME}","environment":"${ENV}"}</globalCustomFields>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${LOG_MAX_SIZE}</maxFileSize>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="JSON_CONSOLE"/>
+        <appender-ref ref="JSON_FILE"/>
+        <queueSize>8192</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC"/>
+    </root>
+</configuration>
