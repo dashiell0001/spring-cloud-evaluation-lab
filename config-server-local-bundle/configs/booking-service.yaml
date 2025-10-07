@@ -1,0 +1,24 @@
+server:
+  port: 8082
+
+app:
+
+logging:
+  level:
+    "org.apache.http.wire": debug
+    "org.springframework.web.client": debug
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/bookings
+    username: booking
+    password: booking
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,env,configprops

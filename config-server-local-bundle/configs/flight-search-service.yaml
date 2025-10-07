@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+app:
+  message: "Fottiti 🖕"
+  pricing-server-url: http://localhost:8081
+
+logging:
+  level:
+    "org.apache.http.wire": debug
+    "org.springframework.web.client": debug
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flights
+    username: flight
+    password: flight
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+
+resilience4j:
+  retry:
+    instances:
+      pricing:
+        maxAttempts: 3                 # 1 try + 2 retries
+        waitDuration: 200ms
+        retryExceptions:
+          - feign.RetryableException
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException$BadRequest
+
+  timelimiter:
+    instances:
+      pricing:
+        timeoutDuration: 2s
+        cancelRunningFuture: true
+
+---
+
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 1000      # ms
+            read-timeout: 2000         # ms
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,env,configprops

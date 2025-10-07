@@ -7,10 +7,9 @@ spring:
   cloud:
     config:
       server:
-        git:
-          uri: file:///Users/dasiel/Documents/Spring Cloud/CODE/config-server-local-bundle/config-repo/configs
-          search-paths: configs
+        native:
           default-label: main
+          search-locations: file:D:/IdeaCloud/spring-cloud-course/config-server-local-bundle/configs/
 
 management:
   endpoints:

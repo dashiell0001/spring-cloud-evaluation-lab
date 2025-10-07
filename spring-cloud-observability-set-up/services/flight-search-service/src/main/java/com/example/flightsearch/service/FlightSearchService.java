@@ -1,5 +1,6 @@
 package com.example.flightsearch.service;
 
+import com.example.flightsearch.observability.FlightSearchMetrics;
 import com.example.flightsearch.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,15 @@ public class FlightSearchService {
 
     private final FlightRepository flightRepository;
     private final FlightPricingService flightPricingService;
+    private final FlightSearchMetrics flightSearchMetrics;
 
     public List<PricedFlight> searchAndPrice(String origin, String destination,
                                              LocalDate dateFrom, LocalDate dateTo,
                                              String passengerType, int seats) {
 
-        var flights = flightRepository.search(origin, destination, dateFrom, dateTo);
+        var flights = flightRepository.findByOriginAndDestinationAndDepartureDateBetween(origin, destination, dateFrom, dateTo);
+
+        flightSearchMetrics.incrementSearches();
 
         return flights.stream()
                 .map(f -> flightPricingService.priceFlight(f, passengerType, seats))

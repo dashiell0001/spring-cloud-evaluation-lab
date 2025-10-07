@@ -9,9 +9,9 @@ public interface PricingClient {
 
     @GetMapping("/quote")
     PriceResponse quote(
-            @RequestParam String flightNumber,
-            @RequestParam String date,
-            @RequestParam String passengerType,
-            @RequestParam int seats
+            @RequestParam("flightNumber") String flightNumber,
+            @RequestParam("date") String date,
+            @RequestParam("passengerType") String passengerType,
+            @RequestParam("seats") int seats
     );
 }

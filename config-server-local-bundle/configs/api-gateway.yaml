@@ -1,0 +1,47 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: flights
+          uri: lb://flight-search-service
+          predicates:
+            - Path=/api/flights/**
+          filters:
+            - name: Retry
+              args:
+                retries: 1
+                methods: GET
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+            - name: CircuitBreaker
+              args:
+                name: flightsEdgeCB
+                fallbackUri: forward:/fallback/flights
+          metadata:
+            connect-timeout: 800
+            response-timeout: 2500
+
+        - id: bookings
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/bookings/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: bookingsEdgeCB
+                fallbackUri: forward:/fallback/bookings
+          metadata:
+            connect-timeout: 1000
+            response-timeout: 5000
+
+        - id: pricing
+          uri: lb://pricing-service
+          predicates:
+            - Path=/api/pricing/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: pricingEdgeCB
+                fallbackUri: forward:/fallback/pricing
+          metadata:
+            connect-timeout: 600
+            response-timeout: 2000

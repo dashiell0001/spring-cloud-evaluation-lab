@@ -68,7 +68,7 @@ All these pieces are already included in the source code of this project.
 - `src/main/java/com/example/flightsearch/web/FlightSearchController.java`  
 - `src/main/resources/schema.sql`  
 - `src/main/resources/data.sql`  
-- `src/main/resources/application.yml`  
+- `src/main/resources/application.yml`  [curl.http](../curl.http)
 - `src/main/resources/flights_search_test.jmx` (JMeter plan)
 
 ---

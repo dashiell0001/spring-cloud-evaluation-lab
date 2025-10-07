@@ -1,0 +1,52 @@
+### GET request to example server
+GET http://localhost:8080/actuator/env
+
+###
+
+GET http://localhost:8080/api/config/message
+
+###
+#Refresh config
+POST http://localhost:8090/actuator/refresh
+
+###
+# Search flights
+GET http://localhost:8080/api/flights/search?origin=MEX&destination=LAX&dateFrom=2025-06-10&dateTo=2025-12-31
+###
+# Flights Actuator
+GET http://localhost:8080/actuator
+
+
+###
+# Simulate fare
+GET http://localhost:8081/api/pricing/quote?baseFare=100&currency=EUR&bags=1
+
+###
+#Pricing via GW
+
+GET http://localhost:8088/api/pricing/quote?baseFare=100&currency=EUR&bags=1
+X-Correlation-ID: e6da9572-0e07-4c54-b8bc-1b5730cb4535
+
+###
+#curl -X POST "http://localhost:8082/api/bookings" -H "Content-Type: application/json" -d '{...}'
+POST http://localhost:8082/api/bookings
+Content-Type: application/json
+
+{
+  "flightNumber": "AZ102",
+  "origin": "BER",
+  "destination": "LIN",
+  "departureDate": "2025-10-11",
+  "currency": "EUR",
+  "personType": "ADULT",
+  "seatCount": 2,
+  "totalFare": 1500
+}
+
+###
+
+# curl "http://localhost:8081/api/flights/search?origin=MEX&destination=LAX&dateFrom=2025-12-20&dateTo=2025-12-28"
+GET http://localhost:8081/api/flights/search?origin=MEX&destination=LAX&dateFrom=2025-12-20&dateTo=2025-12-28
+
+###
+

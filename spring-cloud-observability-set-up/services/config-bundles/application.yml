@@ -4,8 +4,17 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus,loggers
-
+  endpoint:
+    prometheus:
+      enabled: true
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317   # Jaeger OTLP if used
+      protocol: grpc

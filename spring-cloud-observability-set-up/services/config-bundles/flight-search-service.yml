@@ -50,3 +50,21 @@ resilience4j:
       pricing:
         timeoutDuration: 2s
         cancelRunningFuture: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  endpoint.health.probes.enabled: true
+  tracing.sampling.probability: 1.0
+
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317   # Jaeger OTLP if used
+      protocol: grpc

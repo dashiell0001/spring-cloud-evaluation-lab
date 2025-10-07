@@ -2,24 +2,28 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: default
+  config:
+    import: "configserver:http://localhost:8089"
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 6
+        initial-interval: 1000
+        multiplier: 1.5
+        max-interval: 5000
   application:
     name: flight-search-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/flights
-    username: flight
-    password: flight
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        format_sql: true
-        jdbc:
-          time_zone: UTC
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
