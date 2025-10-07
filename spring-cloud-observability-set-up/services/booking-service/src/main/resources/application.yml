@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: booking-service
+  config:
+    import: "configserver:http://localhost:8090"
   datasource:
     url: jdbc:postgresql://localhost:5433/bookings
     username: booking
@@ -19,7 +21,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info, metrics, prometheus
+        include: health,info, metrics, prometheus, loggers
   endpoint:
     prometheus:
       enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
