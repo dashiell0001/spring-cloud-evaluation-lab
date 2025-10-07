@@ -65,7 +65,6 @@ services:
       - "host.docker.internal:host-gateway"
     command: -config.file=/etc/promtail/config.yml
 
-
   grafana:
     image: grafana/grafana:latest
     environment:
@@ -74,6 +73,62 @@ services:
       - "3000:3000"    # Grafana UI
     restart: unless-stopped
 
+  keycloakdb:
+    image: postgres:16
+    container_name: keycloak-postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "5434:5432"              
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.2
+    container_name: keycloak
+    depends_on:
+      keycloakdb:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin              
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_LOG_LEVEL: info
+    command: start-dev
+    ports:
+      - "8099:8080"                      
+    restart: unless-stopped
+
+  kafka:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://kafka:9092
+    ports:
+      - "9092:9092"    # Kafka endpoint
+      - "9644:9644"    # Admin (optional)
+    restart: unless-stopped
+
 volumes:
   flights_pgdata:
   bookings_pgdata:
+  keycloak_data:
